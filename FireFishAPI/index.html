@@ -1,0 +1,443 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>FireFish Candidates App</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        /* Center the loader */
+        #loader {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            z-index: 1;
+            width: 150px;
+            height: 150px;
+            margin: -75px 0 0 -75px;
+            border: 16px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 16px solid #3498db;
+            width: 120px;
+            height: 120px;
+            -webkit-animation: spin 2s linear infinite;
+            animation: spin 2s linear infinite;
+        }
+
+        @-webkit-keyframes spin {
+            0% {
+                -webkit-transform: rotate(0deg);
+            }
+
+            100% {
+                -webkit-transform: rotate(360deg);
+            }
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Add animation to "page content" */
+        .animate-bottom {
+            position: relative;
+            -webkit-animation-name: animatebottom;
+            -webkit-animation-duration: 1s;
+            animation-name: animatebottom;
+            animation-duration: 1s
+        }
+
+        @-webkit-keyframes animatebottom {
+            from {
+                bottom: -100px;
+                opacity: 0
+            }
+
+            to {
+                bottom: 0px;
+                opacity: 1
+            }
+        }
+
+        @keyframes animatebottom {
+            from {
+                bottom: -100px;
+                opacity: 0
+            }
+
+            to {
+                bottom: 0;
+                opacity: 1
+            }
+        }
+
+        #myDiv {
+            display: none;
+            text-align: center;
+        }
+
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 80%;
+        }
+
+        th {
+            border: 0px;
+            text-align: left;
+            padding: 8px;
+            background-color: #dddddd;
+        }
+        td, th {
+            border: 0px;
+            text-align: left;
+            padding: 8px;
+        }
+
+        tr {
+            background-color: #eeeeee;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="loader"></div>
+
+    <div>
+        <h2>FireFish UI : Candidates</h2>
+
+        <ul id="candidates" />
+    </div>
+
+    <div style="display:none;" id="pageContents" class="animate-bottom">
+    <div>
+        <h2>Search by ID</h2>
+        <input type="text" id="candidateId" size="5" />
+        <input type="button" value="Search" onclick="find();" />
+        <p id="candidate" />
+    </div>
+    <table width:100%>
+        <form id="myForm">
+        <form id="myForm">
+            <tr>
+                <th>
+                    <label for="candidatesDropdown"><b>Select a Candidate</b></label>
+                    <select disabled="disabled" class="form-control" id="candidatesDropdown" name="candidatesDropdown"></select>
+                </th>
+                <th>
+                    <button type="reset" id="btnClear" name="btnClear">Clear</button>
+                    <button type="button" id="btnUpdate" name="btnUpdate">Update</button>
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    <label for="candidateFirstname"><b>Firstname:</b></label>
+                    <input type="text" name="candidateFirstname" id="candidateFirstname" />
+                </td>
+                <td>
+                    <label for="candidateSurname"><b>Surname:</b></label>
+                    <input type="text" name="candidateSurname" id="candidateSurname" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="candidateAddress1"><b>Address:</b></label>
+                    <input type="text" name="candidateAddress1" id="candidateAddress1" />
+                </td>
+                <td>
+                    <label for="candidateDOB"><b>Date of Birth:</b></label>
+                    <input type="date" name="candidateDOB" id="candidateDOB" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="candidateTown"><b>Town:</b></label>
+                    <input type="text" name="candidateTown" id="candidateTown" />
+                </td>
+                <td>
+                    <label for="candidatePhoneHome"><b>Phone (Home):</b></label>
+                    <input type="text" name="candidatePhoneHome" id="candidatePhoneHome" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="candidatePostCode"><b>Postcode:</b></label>
+                    <input type="text" name="candidatePostCode" id="candidatePostCode" />
+                </td>
+                <td>
+                    <label for="candidatePhoneMobile"><b>Phone (Mobile):</b></label>
+                    <input type="text" name="candidatePhoneMobile" id="candidatePhoneMobile" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="candidateCountry"><b>Country:</b></label>
+                    <input type="text" name="candidateCountry" id="candidateCountry" />
+                </td>
+                <td>
+                    <label for="candidatePhoneWork"><b>Phone (Work):</b></label>
+                    <input type="text" name="candidatePhoneWork" id="candidatePhoneWork" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <small>
+                        <label for="candidateCreatedDate"><b>Created on: </b></label>
+                        <input type="text" id="candidateCreatedDate" name="candidateCreatedDate" style="border:0px; background-color:#eeeeee; min-width:160px">
+                    </small>
+                    
+                </td>
+                <td>
+                    <small>
+                        <label for="candidateUpdatedDate"><b>Updated on: </b></label>
+                        <input type="text" id="candidateUpdatedDate" name="candidateUpdatedDate" style="background-color:#eeeeee; border:0px; min-width:160px">
+                    </small>
+                </td>
+            </tr>
+        </form>
+    </table>
+</div>
+
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js"></script>
+    <script>
+
+        var candidateUri = '/api/candidate';
+
+        var selection = -1;
+
+        var candidatesJSON = null;
+
+        $(document).ajaxStart(function () {
+            $("#loader").css("display", "block");
+            $("#pageContents").css("display", "none");
+        });
+
+        $(document).ajaxComplete(function () {
+            $("#loader").css("display", "none");
+            $("#pageContents").css("display", "block");
+        });
+
+        $(document).ready(function () {
+            // Send an AJAX request
+            $.getJSON(candidateUri)
+                .done(function (data) {
+                    candidatesJSON = data;
+                    //$("#loader").css("display", "none");
+                    //$("#pageContents").css("display", "block");
+
+                    // On success, 'data' contains a list of candidates.
+                    // Populate the dropdown, to select the candidate
+                    var s = '<option value="-1">Please Select a Candidate</option>';
+
+                    $.each(data, function (key, candidate) {
+                        // Add a list item for the candidate.
+                        s += '<option value="' + candidate.Id + '">' + candidate.FirstName + ' ' + candidate.Surname + '</option>';
+                        //$('<li>', { text: formatItem(item) }).appendTo($('#candidates'));
+                        $("#candidatesDropdown").html(s);
+                    });
+                    $("#candidatesDropdown").prop('disabled', false);
+                });
+        });
+
+        $('#candidatesDropdown').click(function () {
+            if ($('#candidatesDropdown').prop('disabled') == false) {
+                var id = $('#candidatesDropdown').val();
+                if (id != selection) {
+                    selection = id;
+                    //        find(id);
+
+                    // populate text boxes
+                    var candidateJson = null;
+                    console.log(selection);
+                    for (x = 0; x < candidatesJSON.length; x++) {
+                        if (candidatesJSON[x].Id == selection) {
+                            candidateJson = candidatesJSON[x];
+                        }
+                    }
+
+                    console.log(JSON.stringify(candidateJson));
+                    console.log(candidateJson.FirstName);
+                    if (candidateJson != null) {
+                        $('#candidateFirstname').val(candidateJson.FirstName);
+                        $('#candidateSurname').val(candidateJson.Surname);
+
+                        var dob = new Date(candidateJson.DateOfBirth);
+                        dobString = dob.getFullYear() + "-" + leadingZero(dob.getMonth() + 1) + "-" + leadingZero(dob.getDate());
+                        $('#candidateDOB').val(dobString);
+
+                        $('#candidateAddress1').val(candidateJson.Address1);
+                        $('#candidateTown').val(candidateJson.Town);
+                        $('#candidatePostCode').val(candidateJson.PostCode);
+                        $('#candidateCountry').val(candidateJson.Country);
+                        $('#candidatePhoneHome').val(candidateJson.PhoneHome);
+                        $('#candidatePhoneMobile').val(candidateJson.PhoneMobile);
+                        $('#candidatePhoneWork').val(candidateJson.PhoneWork);
+                        $('#candidateCreatedDate').val(candidateJson.CreatedDate);
+                        $('#candidateUpdatedDate').val(candidateJson.UpdatedDate);
+                    }
+                }
+                //$('#candidateFirstname').val('works');
+            } else {
+                $('#candidateFirstname').val($('#candidatesDropdown').prop('disabled'));
+            }
+            //}
+        });
+
+        $('#btnClear').click(function () {
+            selection = -1;
+            //$('candidatesDropdown').val(selection);
+        });
+
+        // When the update button is clicked, PUT the data to the UI
+        $('#btnUpdate').click(function () {
+            // Add OR Update...
+            if (selection == -1) {
+                // New entry should be POSTed to the api
+                console.log("calling addNewCandidate");
+                addNewCandidate();
+
+            } else {
+                // Update the selected entry
+                console.log("calling updateCandidate");
+                updateCandidate();
+
+            }
+        });
+
+        function formatItem(item) {
+            return item.FirstName + ': ' + item.Surname;
+        }
+
+        function isValidDate(dateString) {
+            var timestamp = Date.parse($('#candidateDOB').val());
+            if (isNaN(timestamp)) {
+                return false;
+            }
+
+            return true;
+        }
+
+        function leadingZero(number) {
+            // expective postive integer
+            var strNumber = number.toString();
+            console.log(strNumber);
+            if (!isNaN(number)) {
+                if (strNumber.length == 1) {
+                    strNumber = "0" + strNumber;
+                }
+            }
+            console.log(strNumber);
+            return strNumber;
+        }
+
+        function addNewCandidate() {
+            // puts the details from the form into the candidate JSON
+            // and then performs the POST to the api
+
+//            var dob = new Date($('#candidateDOB').val());
+//            console.log(dob.toDateString());
+//            dobString = dob.getFullYear() + "-" + leadingZero(dob.getMonth() + 1) + "-" + leadingZero(dob.getDate());
+
+            var dateStr = $('#candidateDOB').val();
+            if (isValidDate(dateStr)) {
+                var dob = new Date(dateStr);
+                var dateStr = dob.getFullYear() + "-" + leadingZero(dob.getMonth() + 1) + "-" + leadingZero(dob.getDate()) + "T00:00:00";
+                console.log(dob.toDateString());
+            } else {
+                dateStr = null;
+            }
+            console.log(dateStr);
+
+            candidateJson = {
+                "FirstName": `${$('#candidateFirstname').val()}`,
+                "Surname": `${$('#candidateSurname').val()}`,
+                "DateOfBirth": `${$('#candidateDOB').val()}`, 
+                "Address1": `${$('#candidateAddress1').val()}`,
+                "Town": `${$('#candidateTown').val()}`,
+                "PostCode": `${$('#candidatePostCode').val()}`,
+                "Country": `${$('#candidateCountry').val()}`,
+                "PhoneHome": `${$('#candidatePhoneHome').val()}`,
+                "PhoneMobile": `${$('#candidatePhoneMobile').val()}`,
+                "PhoneWork": `${$('#candidatePhoneWork').val()}`,
+                "CreatedDate": "",
+                "UpdatedDate": ""
+            }
+            alert(JSON.stringify(candidateJson));
+        }
+
+        function updateCandidate() {
+            // puts the details from the form into the candidate JSON
+            // and then performs the PUT to the api
+
+            // some sanity checking
+            if (selection == -1 || selection > candidatesJSON.length) {
+                // something went wrong... exit gracefully
+                return;
+            }
+
+            var dateStr = $('#candidateDOB').val();
+            if (isValidDate(dateStr)) {
+                var dob = new Date(dateStr);
+                var dateStr = dob.getFullYear() + "-" + leadingZero(dob.getMonth() + 1) + "-" + leadingZero(dob.getDate()) + "T00:00:00";
+                console.log(dob.toDateString());
+            } else {
+                dateStr = null;
+            }
+            console.log(dateStr);
+
+            candidateJson = candidatesJSON[selection]; // TODO
+            candidateJson.FirstName = $('#candidateFirstname').val();
+            candidateJson.Surname = $('#candidateSurname').val();
+            candidateJson.DateOfBirth = dateStr;
+            candidateJson.Address1 = $('#candidateAddress1').val();
+            candidateJson.Town = $('#candidateTown').val();
+            candidateJson.PostCode = $('#candidatePostCode').val();
+            candidateJson.Country = $('#candidateCountry').val();
+            candidateJson.PhoneHome = $('#candidatePhoneHome').val();
+            candidateJson.PhoneMobile = $('#candidatePhoneMobile').val();
+            candidateJson.PhoneWork = $('#candidatePhoneWork').val();
+
+            if (confirm("Update the current candidate record? Id = " + candidateJson.Id)) {
+                // Now perform the HttpPut using jquery
+                $.ajax({
+                    type: 'PUT',
+                    url: candidateUri + "/" + candidateJson.Id,
+                    data: JSON.stringify(candidateJson),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (response) {
+                        if (response.status == "success") {
+                            //...
+                            alert("Update of record " + candidateJson.Id + " was successful.");
+                        } else {
+                            alert("Update of record " + candidateJson.Id + " failed.");
+
+                        }
+                    },
+                    fail: function (jqXHR, textStatus, err) {
+                        alert(err);
+                    }
+                });
+
+            }
+        }
+
+        // get a candidate by his Id
+        function find(id) {
+            $.getJSON(uri + '/' + id)
+                .done(function (data) {
+                    $('#candidateFirstname').val(data.FirstName);
+                    $('#candidateSurname').val(data.Surname);
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    $('#candidate').text('Error: ' + err);
+                });
+        }
+    </script>
+</body>
+</html>
