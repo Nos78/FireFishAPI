@@ -41,21 +41,24 @@ namespace FireFishAPI.Repositories
         #endregion
 
         #region ADD methods
-        public void Add(IEnumerable<CandidateSkill> candidateItems, SqlConnection sqlConnection, SqlTransaction sqlTransaction)
+        public void Add(IEnumerable<CandidateSkill> candidateSkillItems, SqlConnection sqlConnection, SqlTransaction sqlTransaction)
         {
-            foreach (CandidateSkill item in candidateItems)
+            foreach (CandidateSkill item in candidateSkillItems)
                 Add(item, sqlConnection, sqlTransaction);
         }
 
-        public void Add(CandidateSkill candidateItem, SqlConnection sqlConnection = null, SqlTransaction sqlTransaction = null)
+        public void Add(CandidateSkill candidateSkill, SqlConnection sqlConnection = null, SqlTransaction sqlTransaction = null)
         {
+            candidateSkill.CreatedDate = DateTime.Now;
+            candidateSkill.UpdatedDate = candidateSkill.CreatedDate;
+
             var sqlCommand =
                 "IF NOT EXISTS(SELECT 1 FROM dbo.CandidateSkill WHERE CandidateID = @CandidateID AND SkillID = @SkillID) "
                 + "INSERT INTO dbo.CandidateSkill "
-                + "    (CandidateID, SkillID, CreatedDate, UpdatedDate) "
-                + "VALUES(@CandidateID, @ProductID, " + DateTime.Now + "," + DateTime.Now + ") ";
+                + "    (ID, CandidateID, SkillID, CreatedDate, UpdatedDate) "
+                + "VALUES(@ID, @CandidateId, @SkillId, @CreatedDate, @UpdatedDate)";
 
-            base.ExecuteNonQuery(sqlCommand, candidateItem.ToParameterArray(), CommandType.Text, sqlConnection, sqlTransaction);
+            base.ExecuteNonQuery(sqlCommand, candidateSkill.ToParameterArray(), CommandType.Text, sqlConnection, sqlTransaction);
         }
         #endregion
 

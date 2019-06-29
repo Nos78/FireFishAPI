@@ -45,8 +45,8 @@ namespace FireFishAPI.Controllers
         {
             _candidateService.Add(candidate);
 
-            var message = Request.CreateResponse(HttpStatusCode.Created);
-            message.Headers.Location = new Uri(Request.RequestUri + candidate.Id.ToString());
+            var message = Request.CreateResponse(HttpStatusCode.OK);
+            message.Headers.Location = new Uri(Request.RequestUri + "/" + candidate.Id.ToString());
             return message;
         }
 

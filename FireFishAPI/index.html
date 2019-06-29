@@ -121,9 +121,8 @@
         <input type="button" value="Search" onclick="find();" />
         <p id="candidate" />
     </div>
-    <table width:100%>
-        <form id="myForm">
-        <form id="myForm">
+    <form id="candidatesForm">
+        <table width:100%>
             <tr>
                 <th>
                     <label for="candidatesDropdown"><b>Select a Candidate</b></label>
@@ -131,7 +130,7 @@
                 </th>
                 <th>
                     <button type="reset" id="btnClear" name="btnClear">Clear</button>
-                    <button type="button" id="btnUpdate" name="btnUpdate">Update</button>
+                    <button type="button" id="btnUpdate" name="btnUpdate">Add or Update</button>
                 </th>
             </tr>
             <tr>
@@ -188,29 +187,53 @@
                 <td>
                     <small>
                         <label for="candidateCreatedDate"><b>Created on: </b></label>
-                        <input type="text" id="candidateCreatedDate" name="candidateCreatedDate" style="border:0px; background-color:#eeeeee; min-width:160px">
+                        <input type="text" id="candidateCreatedDate" name="candidateCreatedDate" style="border:0px; background-color:#eeeeee; min-width:180px">
                     </small>
-                    
+
                 </td>
                 <td>
                     <small>
                         <label for="candidateUpdatedDate"><b>Updated on: </b></label>
-                        <input type="text" id="candidateUpdatedDate" name="candidateUpdatedDate" style="background-color:#eeeeee; border:0px; min-width:160px">
+                        <input type="text" id="candidateUpdatedDate" name="candidateUpdatedDate" style="background-color:#eeeeee; border:0px; min-width:180px">
                     </small>
                 </td>
             </tr>
-        </form>
-    </table>
+        </table>
+    </form>
+
+    <form id="candidateSkillForm">
+        <table id="candidateSkillsTable" name="candidateSkillsTable" width:100%>
+            <tr>
+                <th>
+                    <label for="skillsDropdown"><b>Skills to add: </b></label>
+                    <select class="form-control" id="skillsDropdown" name="skillsDropdown"></select>
+                    &nbsp;<button type="button" id="btnAddSkill" name="btnUpdate">Add Skill</button>
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    <label for="candidateSkillsListBox"><b>Candidate Skills:</b></label>
+                    <select name="candidateSkillsListBox" id="candidateSkillsListBox" size="6"></select>
+                    &nbsp;<button type="button" id="btnRemoveSkill" name="btnUpdate">Remove Skill</button>
+                </td>
+            </tr>
+        </table>
+
+    </form>
 </div>
 
     <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js"></script>
     <script>
 
         var candidateUri = '/api/candidate';
+        var skillUri = '/api/skill';
+        var candidateSkillUri = '/api/candidateskill';
 
         var selection = -1;
 
         var candidatesJSON = null;
+        var skillsJSON = null;
+        var candidateSkillJSON = null;
 
         $(document).ajaxStart(function () {
             $("#loader").css("display", "block");
@@ -223,25 +246,8 @@
         });
 
         $(document).ready(function () {
-            // Send an AJAX request
-            $.getJSON(candidateUri)
-                .done(function (data) {
-                    candidatesJSON = data;
-                    //$("#loader").css("display", "none");
-                    //$("#pageContents").css("display", "block");
-
-                    // On success, 'data' contains a list of candidates.
-                    // Populate the dropdown, to select the candidate
-                    var s = '<option value="-1">Please Select a Candidate</option>';
-
-                    $.each(data, function (key, candidate) {
-                        // Add a list item for the candidate.
-                        s += '<option value="' + candidate.Id + '">' + candidate.FirstName + ' ' + candidate.Surname + '</option>';
-                        //$('<li>', { text: formatItem(item) }).appendTo($('#candidates'));
-                        $("#candidatesDropdown").html(s);
-                    });
-                    $("#candidatesDropdown").prop('disabled', false);
-                });
+            populateCandidateDropdown();
+            populateSkillsDropdown();
         });
 
         $('#candidatesDropdown').click(function () {
@@ -249,19 +255,10 @@
                 var id = $('#candidatesDropdown').val();
                 if (id != selection) {
                     selection = id;
-                    //        find(id);
 
                     // populate text boxes
-                    var candidateJson = null;
-                    console.log(selection);
-                    for (x = 0; x < candidatesJSON.length; x++) {
-                        if (candidatesJSON[x].Id == selection) {
-                            candidateJson = candidatesJSON[x];
-                        }
-                    }
+                    var candidateJson = findCandidate(selection);
 
-                    console.log(JSON.stringify(candidateJson));
-                    console.log(candidateJson.FirstName);
                     if (candidateJson != null) {
                         $('#candidateFirstname').val(candidateJson.FirstName);
                         $('#candidateSurname').val(candidateJson.Surname);
@@ -280,17 +277,33 @@
                         $('#candidateCreatedDate').val(candidateJson.CreatedDate);
                         $('#candidateUpdatedDate').val(candidateJson.UpdatedDate);
                     }
+
+                    populateCandidateSkillsList();
                 }
-                //$('#candidateFirstname').val('works');
             } else {
                 $('#candidateFirstname').val($('#candidatesDropdown').prop('disabled'));
             }
             //}
         });
 
+        $('#btnAddSkill').click(function () {
+            var skillId = $('#skillsDropdown').val();
+
+            if (selection > -1) {
+                if (skillId > -1) {
+                    console.log("attempting add candidate skill");
+                    addCandidateSkill(skillId);
+                } else {
+                    alert("Select a skill first!");
+                }
+            } else {
+                alert("No candidate is selected!");
+            }
+        });
+
         $('#btnClear').click(function () {
             selection = -1;
-            //$('candidatesDropdown').val(selection);
+            $('#candidateSkillsListBox').empty();
         });
 
         // When the update button is clicked, PUT the data to the UI
@@ -298,19 +311,30 @@
             // Add OR Update...
             if (selection == -1) {
                 // New entry should be POSTed to the api
-                console.log("calling addNewCandidate");
                 addNewCandidate();
 
             } else {
                 // Update the selected entry
-                console.log("calling updateCandidate");
                 updateCandidate();
-
             }
         });
 
         function formatItem(item) {
             return item.FirstName + ': ' + item.Surname;
+        }
+
+        function getSkillName(id) {
+            var Name = null;
+            console.log("Looking up skill ID: " + id);
+            for (var x = 0; x < skillsJSON.length; x++) {
+                if (skillsJSON[x].Id == id) {
+                    console.log("x = " + x + " SkillsJSON[x].Id = " + skillsJSON[x].Id);
+                    Name = skillsJSON[x].Name;
+                    console.log("Skill name: " + Name);
+                    return Name;
+                }
+            }
+            return Name;
         }
 
         function isValidDate(dateString) {
@@ -325,35 +349,156 @@
         function leadingZero(number) {
             // expective postive integer
             var strNumber = number.toString();
-            console.log(strNumber);
             if (!isNaN(number)) {
                 if (strNumber.length == 1) {
                     strNumber = "0" + strNumber;
                 }
             }
-            console.log(strNumber);
             return strNumber;
+        }
+
+        function findCandidate(id) {
+            // find from cached copy, candidatesJSON
+            var candidateJson = null;
+            for (var x = 0; x < candidatesJSON.length; x++) {
+                if (candidatesJSON[x].Id == id) {
+                    candidateJson = candidatesJSON[x];
+                }
+            }
+            return candidateJson;
+        }
+
+        function sortJSON(data, key, way) {
+            return data.sort(function (a, b) {
+                var x = a[key]; var y = b[key];
+                if (way === '123') { return ((x < y) ? -1 : ((x > y) ? 1 : 0)); }
+                if (way === '321') { return ((x > y) ? -1 : ((x < y) ? 1 : 0)); }
+            });
+        }
+
+        function constructDateString(control) {
+            var dateStr = control.val();
+            if (isValidDate(dateStr)) {
+                var dob = new Date(dateStr);
+                var dateStr = dob.getFullYear() + "-" + leadingZero(dob.getMonth() + 1) + "-" + leadingZero(dob.getDate()) + "T00:00:00";
+            } else {
+                dateStr = null;
+            }
+            return dateStr;
+        }
+
+        function populateCandidateSkillsList() {
+            // populate skills area
+            $('#candidateSkillsListBox').empty();
+            $.getJSON(candidateSkillUri + '/' + selection)
+                .done(function (data) {
+                    candidateSkillJSON = data;
+
+                    var s = "";
+                    if (data != null) {
+                        $.each(data, function (key, candidateSkill) {
+                            // Add a list item for the candidate.
+                            s = '<option value="' + candidateSkill.Id + '">' + getSkillName(candidateSkill.SkillId) + '</option>';
+                            $('#candidateSkillsListBox').append(s);
+                            console.log(s);
+                        });
+                    }
+                });
+        }
+
+        function populateSkillsDropdown() {
+            $.getJSON(skillUri)
+                .done(function (data) {
+                    skillsJSON = sortJSON(data, "Name", "123");
+
+                    var s = '<option value="-1">Select a skill to add</option>';
+
+                    $.each(data, function (key, skill) {
+                        s += '<option value="' + skill.Id + '">' + skill.Name + '</option>';
+                        $("#skillsDropdown").html(s);
+                    });
+                });
+        }
+
+        function populateCandidateDropdown() {
+            // Send AJAX request, get the candidates
+            // from the web api and populate
+            // the drop down list.
+            $.getJSON(candidateUri)
+                .done(function (data) {
+                    candidatesJSON = sortJSON(data, "Surname", "123");
+                    //$("#loader").css("display", "none");
+                    //$("#pageContents").css("display", "block");
+
+                    // On success, 'data' contains a list of candidates.
+                    // Populate the dropdown, to select the candidate
+                    var s = '<option value="-1">Please Select a Candidate</option>';
+
+                    $.each(data, function (key, candidate) {
+                        // Add a list item for the candidate.
+                        s += '<option value="' + candidate.Id + '">' + candidate.Surname + ', ' + candidate.FirstName + '</option>';
+                        $("#candidatesDropdown").html(s);
+                    });
+                    $("#candidatesDropdown").prop('disabled', false);
+                });
+        }
+
+        function findUniqueId(json) {
+            var id = 0;
+            $.each(json, function (key, item) {
+                if (item.Id > id) {
+                    id = item.Id;
+                }
+            });
+            id++;
+            console.log("unique Id: " + id);
+            return id;
+        }
+
+        function sleep(milliseconds) {
+            var start = new Date().getTime();
+            for (var i = 0; i < 1e7; i++) {
+                if ((new Date().getTime() - start) > milliseconds) {
+                    break;
+                }
+            }
+        }
+
+        function addCandidateSkill(skillId) {
+            console.log("addCandidateSkill " + skillId);
+            candidateSkillJson = {
+                "Id": findUniqueId(candidateSkillJSON),
+                "SkillId": skillId,
+                "CandidateId": selection,
+                "CreatedDate": "",
+                "UpdatedDate": ""
+            }
+
+            alert(JSON.stringify(candidateSkillJson));
+
+            $.ajax({
+                type: 'POST',
+                url: candidateSkillUri,
+                data: JSON.stringify(candidateSkillJson),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (reponse) {
+                    populateSkillsDropdown();
+                },
+                fail: function (jqXHR, textStatus, err) {
+                    alert("Action failed, err = " + err);
+                }
+            });
         }
 
         function addNewCandidate() {
             // puts the details from the form into the candidate JSON
             // and then performs the POST to the api
 
-//            var dob = new Date($('#candidateDOB').val());
-//            console.log(dob.toDateString());
-//            dobString = dob.getFullYear() + "-" + leadingZero(dob.getMonth() + 1) + "-" + leadingZero(dob.getDate());
-
-            var dateStr = $('#candidateDOB').val();
-            if (isValidDate(dateStr)) {
-                var dob = new Date(dateStr);
-                var dateStr = dob.getFullYear() + "-" + leadingZero(dob.getMonth() + 1) + "-" + leadingZero(dob.getDate()) + "T00:00:00";
-                console.log(dob.toDateString());
-            } else {
-                dateStr = null;
-            }
-            console.log(dateStr);
+            var dateStr = constructDateString($('#candidateDOB'));
 
             candidateJson = {
+                "Id": findUniqueId(candidatesJSON),
                 "FirstName": `${$('#candidateFirstname').val()}`,
                 "Surname": `${$('#candidateSurname').val()}`,
                 "DateOfBirth": `${$('#candidateDOB').val()}`, 
@@ -367,7 +512,29 @@
                 "CreatedDate": "",
                 "UpdatedDate": ""
             }
-            alert(JSON.stringify(candidateJson));
+
+            if (confirm("Add the current form contents as a new record?")) {
+                // Now perform the HttpPost using jquery
+                $.ajax({
+                    type: 'POST',
+                    url: candidateUri,
+                    data: JSON.stringify(candidateJson),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (reponse) {
+                        alert("Adding new record was successful.");
+                    },
+                    fail: function (jqXHR, textStatus, err) {
+                        alert("Action failed, err = " + err);
+                    }
+                });
+                // clear the form and reload the page
+                document.getElementById("candidatesForm").reset();
+                setTimeout(function () {
+                    populateCandidateDropdown();
+                }, 2000);
+            }
+
         }
 
         function updateCandidate() {
@@ -380,50 +547,40 @@
                 return;
             }
 
-            var dateStr = $('#candidateDOB').val();
-            if (isValidDate(dateStr)) {
-                var dob = new Date(dateStr);
-                var dateStr = dob.getFullYear() + "-" + leadingZero(dob.getMonth() + 1) + "-" + leadingZero(dob.getDate()) + "T00:00:00";
-                console.log(dob.toDateString());
-            } else {
-                dateStr = null;
-            }
-            console.log(dateStr);
+            var candidateJson = findCandidate(selection);
 
-            candidateJson = candidatesJSON[selection]; // TODO
-            candidateJson.FirstName = $('#candidateFirstname').val();
-            candidateJson.Surname = $('#candidateSurname').val();
-            candidateJson.DateOfBirth = dateStr;
-            candidateJson.Address1 = $('#candidateAddress1').val();
-            candidateJson.Town = $('#candidateTown').val();
-            candidateJson.PostCode = $('#candidatePostCode').val();
-            candidateJson.Country = $('#candidateCountry').val();
-            candidateJson.PhoneHome = $('#candidatePhoneHome').val();
-            candidateJson.PhoneMobile = $('#candidatePhoneMobile').val();
-            candidateJson.PhoneWork = $('#candidatePhoneWork').val();
+            if (candidateJson != null) {
+                var dateStr = constructDateString($('#candidateDOB'));
 
-            if (confirm("Update the current candidate record? Id = " + candidateJson.Id)) {
-                // Now perform the HttpPut using jquery
-                $.ajax({
-                    type: 'PUT',
-                    url: candidateUri + "/" + candidateJson.Id,
-                    data: JSON.stringify(candidateJson),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function (response) {
-                        if (response.status == "success") {
-                            //...
+                candidateJson.FirstName = $('#candidateFirstname').val();
+                candidateJson.Surname = $('#candidateSurname').val();
+                candidateJson.DateOfBirth = dateStr;
+                candidateJson.Address1 = $('#candidateAddress1').val();
+                candidateJson.Town = $('#candidateTown').val();
+                candidateJson.PostCode = $('#candidatePostCode').val();
+                candidateJson.Country = $('#candidateCountry').val();
+                candidateJson.PhoneHome = $('#candidatePhoneHome').val();
+                candidateJson.PhoneMobile = $('#candidatePhoneMobile').val();
+                candidateJson.PhoneWork = $('#candidatePhoneWork').val();
+
+                if (confirm("Update the current candidate record? Id = " + candidateJson.Id)) {
+                    // Now perform the HttpPut using jquery
+                    $.ajax({
+                        type: 'PUT',
+                        url: candidateUri + "/" + candidateJson.Id,
+                        data: JSON.stringify(candidateJson),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (reponse) {
                             alert("Update of record " + candidateJson.Id + " was successful.");
-                        } else {
-                            alert("Update of record " + candidateJson.Id + " failed.");
-
+                        },
+                        fail: function (jqXHR, textStatus, err) {
+                            alert("Action failed, err = " + err);
                         }
-                    },
-                    fail: function (jqXHR, textStatus, err) {
-                        alert(err);
-                    }
-                });
-
+                    });
+                }
+            } else {
+                alert("Something went wrong: unable to find the selected candidate. Id = " + selection);
             }
         }
 

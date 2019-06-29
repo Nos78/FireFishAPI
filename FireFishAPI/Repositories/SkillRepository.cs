@@ -25,7 +25,7 @@ namespace FireFishAPI.Repositories
         public IEnumerable<Skill> Get(int skillId)
         {
             var sqlCommand = "SELECT ID, Name, CreatedDate, UpdatedDate "
-                            + " FROM dbo.Skill WHERE ID = @SkillID";
+                            + " FROM dbo.Skill WHERE ID = @SkillId";
             var parameters = new SqlParameter[] { new SqlParameter("@SkillID", skillId) };
 
             return base.Get(sqlCommand, parameters);
@@ -33,18 +33,23 @@ namespace FireFishAPI.Repositories
 
         public void Add(Skill skill)
         {
-            var sqlCommand = "IF NOT EXISTS(SELECT 1 FROM dbo.Skills WHERE SkillID = @ID)"
+            skill.CreatedDate = DateTime.Now;
+            skill.UpdatedDate = skill.CreatedDate;
+
+            var sqlCommand = "IF NOT EXISTS(SELECT 1 FROM dbo.Skill WHERE ID = @Id)"
                             + "INSERT INTO dbo.Skill "
                             + " (ID, Name, CreatedDate, UpdatedDate) "
-                            + "VALUES(@Id, @Name, " + DateTime.Now + ", " + DateTime.Now + ") ";
+                            + "VALUES(@Id, @Name, @CreatedDate, @UpdatedDate)";
 
             base.ExecuteNonQuery(sqlCommand, skill.ToParameterArray());
         }
 
         public void Update(Skill skill)
         {
-            var sqlCommand = "UPDATE dbo.Skills "
-                            + " SET Name = @Name, UpdatedDate = " + DateTime.Now
+            skill.CreatedDate = DateTime.Now;
+
+            var sqlCommand = "UPDATE dbo.Skill "
+                            + " SET Name = @Name, UpdatedDate = @UpdatedDate"
                             + " WHERE ID = @Id ";
 
             base.ExecuteNonQuery(sqlCommand, skill.ToParameterArray());

@@ -37,24 +37,23 @@ namespace FireFishAPI.Repositories
 
         public void Add(Candidate candidate)
         {
-            var sqlCommand = "IF NOT EXISTS(SELECT 1 FROM dbo.Candidates WHERE CandidateID = @ID)"
-                            + "INSERT INTO dbo.Candidate "
+            candidate.CreatedDate = DateTime.Now;
+            candidate.UpdatedDate = candidate.CreatedDate;
+
+            var sqlCommand = "IF NOT EXISTS(SELECT 1 FROM dbo.Candidate WHERE ID = @Id)"
+                            + " INSERT INTO dbo.Candidate "
                             + " (ID, FirstName, Surname, DateOfBirth "
                             + ", Address1, Town, Country, PostCode, PhoneHome, PhoneMobile, PhoneWork "
                             + ", CreatedDate, UpdatedDate) "
                             + "VALUES(@Id, @FirstName, @Surname, @DateOfBirth "
                             + ", @Address1, @Town, @Country, @PostCode, @PhoneHome, @PhoneMobile, @PhoneWork "
-                            + ", " + DateTime.Now + ", " + DateTime.Now + ") ";
+                            + ", @CreatedDate, @UpdatedDate)";
 
             base.ExecuteNonQuery(sqlCommand, candidate.ToParameterArray());
         }
 
         public void Update(Candidate candidate)
         {
-            DateTime now = DateTime.Now;
-
-            string strNow = now.ToShortDateString();
-
             candidate.UpdatedDate = DateTime.Now;
 
             var sqlCommand = "UPDATE dbo.Candidate "
