@@ -229,7 +229,7 @@
         var skillUri = '/api/skill';
         var candidateSkillUri = '/api/candidateskill';
 
-        var selection = -1;
+        var candidateSelection = -1;
 
         var candidatesJSON = null;
         var skillsJSON = null;
@@ -253,11 +253,12 @@
         $('#candidatesDropdown').click(function () {
             if ($('#candidatesDropdown').prop('disabled') == false) {
                 var id = $('#candidatesDropdown').val();
-                if (id != selection) {
-                    selection = id;
+                if (id != candidateSelection) {
+                    candidateSelection = id;
+                    console.log("selected candidate = " + id);
 
                     // populate text boxes
-                    var candidateJson = findCandidate(selection);
+                    var candidateJson = findCandidate(candidateSelection);
 
                     if (candidateJson != null) {
                         $('#candidateFirstname').val(candidateJson.FirstName);
@@ -286,10 +287,21 @@
             //}
         });
 
+        $('#btnRemoveSkill').click(function () {
+            var selected = $('#candidateSkillsListBox option:selected').val();
+            console.log(selected);
+
+            // Make sure candidateSelection is initialised (candidate selected)
+            // and an option has been selected from the select list box.
+            if (candidateSelection > -1 && selected != null) {
+                removeCandidateSkill(findCandidateSkillFromSkillId(selected));
+            }
+        });
+
         $('#btnAddSkill').click(function () {
             var skillId = $('#skillsDropdown').val();
 
-            if (selection > -1) {
+            if (candidateSelection > -1) {
                 if (skillId > -1) {
                     console.log("attempting add candidate skill");
                     addCandidateSkill(skillId);
@@ -302,14 +314,14 @@
         });
 
         $('#btnClear').click(function () {
-            selection = -1;
+            candidateSelection = -1;
             $('#candidateSkillsListBox').empty();
         });
 
         // When the update button is clicked, PUT the data to the UI
         $('#btnUpdate').click(function () {
             // Add OR Update...
-            if (selection == -1) {
+            if (candidateSelection == -1) {
                 // New entry should be POSTed to the api
                 addNewCandidate();
 
@@ -368,6 +380,16 @@
             return candidateJson;
         }
 
+        function findCandidateSkillFromSkillId(skillId) {
+            var cs = null;
+            for (var x = 0; x < candidateSkillJSON.length; x++) {
+                if (candidateSkillJSON[x].Id == skillId) {
+                    cs = candidateSkillJSON[x];
+                }
+            }
+            return cs;
+        }
+
         function sortJSON(data, key, way) {
             return data.sort(function (a, b) {
                 var x = a[key]; var y = b[key];
@@ -387,20 +409,26 @@
             return dateStr;
         }
 
+        function addCandidateSkillsListOption(candidateSkill) {
+            // Add a list item for the candidate.
+            var s = '<option value="' + candidateSkill.Id + '">' + getSkillName(candidateSkill.SkillId) + '</option>';
+            $('#candidateSkillsListBox').append(s);
+        }
+
+        function removeCandidateSkillsListOption(candidateSkill) {
+            $('#candidateSkillsListBox option[value="' + candidateSkill.SkillId + '"]').remove();
+        }
+
         function populateCandidateSkillsList() {
             // populate skills area
             $('#candidateSkillsListBox').empty();
-            $.getJSON(candidateSkillUri + '/' + selection)
+            $.getJSON(candidateSkillUri + '/' + candidateSelection)
                 .done(function (data) {
                     candidateSkillJSON = data;
 
-                    var s = "";
                     if (data != null) {
                         $.each(data, function (key, candidateSkill) {
-                            // Add a list item for the candidate.
-                            s = '<option value="' + candidateSkill.Id + '">' + getSkillName(candidateSkill.SkillId) + '</option>';
-                            $('#candidateSkillsListBox').append(s);
-                            console.log(s);
+                            addCandidateSkillsListOption(candidateSkill);
                         });
                     }
                 });
@@ -464,17 +492,35 @@
             }
         }
 
+        function removeCandidateSkill(candidateSkill) {
+            $.ajax({
+                type: 'DELETE',
+                url: candidateSkillUri + '/' + candidateSkill.Id,
+                data: JSON.stringify(candidateSkill),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (reponse) {
+                },
+                fail: function (jqXHR, textStatus, err) {
+                    alert("Action failed, err = " + err);
+                    return;
+                }
+            });
+            // TODO: As per addCandidateSkill - this should be
+            // in the Ajax success element, but isn't working
+            // (malformed Http response? Headers look fine in Fiddler)
+            removeCandidateSkillsListOption(candidateSkill);
+
+        }
+
         function addCandidateSkill(skillId) {
             console.log("addCandidateSkill " + skillId);
             candidateSkillJson = {
-                "Id": findUniqueId(candidateSkillJSON),
                 "SkillId": skillId,
-                "CandidateId": selection,
+                "CandidateId": candidateSelection,
                 "CreatedDate": "",
                 "UpdatedDate": ""
             }
-
-            alert(JSON.stringify(candidateSkillJson));
 
             $.ajax({
                 type: 'POST',
@@ -483,12 +529,18 @@
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (reponse) {
-                    populateSkillsDropdown();
                 },
                 fail: function (jqXHR, textStatus, err) {
                     alert("Action failed, err = " + err);
+                    return;
                 }
             });
+            // Once commited to the API, add element to the select listbox
+            //
+            // TODO: this should be in the success: ajax element,
+            // but the successful POST operation appears not to be
+            // returning success (Headers look fine in Fiddler)
+            addCandidateSkillsListOption(candidateSkillJson);
         }
 
         function addNewCandidate() {
@@ -542,12 +594,12 @@
             // and then performs the PUT to the api
 
             // some sanity checking
-            if (selection == -1 || selection > candidatesJSON.length) {
+            if (candidateSelection == -1 || candidateSelection > candidatesJSON.length) {
                 // something went wrong... exit gracefully
                 return;
             }
 
-            var candidateJson = findCandidate(selection);
+            var candidateJson = findCandidate(candidateSelection);
 
             if (candidateJson != null) {
                 var dateStr = constructDateString($('#candidateDOB'));
@@ -580,7 +632,7 @@
                     });
                 }
             } else {
-                alert("Something went wrong: unable to find the selected candidate. Id = " + selection);
+                alert("Something went wrong: unable to find the selected candidate. Id = " + candidateSelection);
             }
         }
 
