@@ -5,6 +5,7 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
+        /* TODO : Move style into css (and use bootstrap?) */
         /* Center the loader */
         #loader {
             position: absolute;
@@ -93,6 +94,7 @@
             padding: 8px;
             background-color: #dddddd;
         }
+
         td, th {
             border: 0px;
             text-align: left;
@@ -115,106 +117,106 @@
     </div>
 
     <div style="display:none;" id="pageContents" class="animate-bottom">
-    <form id="candidatesForm">
-        <table>
-            <tr>
-                <th>
-                    <label for="candidatesDropdown"><b>Select a Candidate</b></label>
-                    <select disabled="disabled" class="form-control" id="candidatesDropdown" name="candidatesDropdown"></select>
-                </th>
-                <th>
-                    <button type="reset" id="btnClear" name="btnClear">Clear</button>
-                    <button type="button" id="btnUpdate" name="btnUpdate">Add or Update</button>
-                </th>
-            </tr>
-            <tr>
-                <td>
-                    <label for="candidateFirstname"><b>Firstname:</b></label>
-                    <input type="text" name="candidateFirstname" id="candidateFirstname" />
-                </td>
-                <td>
-                    <label for="candidateSurname"><b>Surname:</b></label>
-                    <input type="text" name="candidateSurname" id="candidateSurname" />
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label for="candidateAddress1"><b>Address:</b></label>
-                    <input type="text" name="candidateAddress1" id="candidateAddress1" />
-                </td>
-                <td>
-                    <label for="candidateDOB"><b>Date of Birth:</b></label>
-                    <input type="date" name="candidateDOB" id="candidateDOB" />
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label for="candidateTown"><b>Town:</b></label>
-                    <input type="text" name="candidateTown" id="candidateTown" />
-                </td>
-                <td>
-                    <label for="candidatePhoneHome"><b>Phone (Home):</b></label>
-                    <input type="text" name="candidatePhoneHome" id="candidatePhoneHome" />
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label for="candidatePostCode"><b>Postcode:</b></label>
-                    <input type="text" name="candidatePostCode" id="candidatePostCode" />
-                </td>
-                <td>
-                    <label for="candidatePhoneMobile"><b>Phone (Mobile):</b></label>
-                    <input type="text" name="candidatePhoneMobile" id="candidatePhoneMobile" />
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label for="candidateCountry"><b>Country:</b></label>
-                    <input type="text" name="candidateCountry" id="candidateCountry" />
-                </td>
-                <td>
-                    <label for="candidatePhoneWork"><b>Phone (Work):</b></label>
-                    <input type="text" name="candidatePhoneWork" id="candidatePhoneWork" />
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <small>
-                        <label for="candidateCreatedDate"><b>Created on: </b></label>
-                        <input type="text" id="candidateCreatedDate" name="candidateCreatedDate" style="border:0px; background-color:#eeeeee; min-width:180px">
-                    </small>
+        <form id="candidatesForm">
+            <table>
+                <tr>
+                    <th>
+                        <label for="candidatesDropdown"><b>Select a Candidate</b></label>
+                        <select disabled="disabled" class="form-control" id="candidatesDropdown" name="candidatesDropdown"></select>
+                    </th>
+                    <th>
+                        <button type="reset" id="btnClear" name="btnClear">Clear</button>
+                        <button type="button" id="btnUpdate" name="btnUpdate">Add or Update</button>
+                    </th>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="candidateFirstname"><b>Firstname:</b></label>
+                        <input type="text" name="candidateFirstname" id="candidateFirstname" />
+                    </td>
+                    <td>
+                        <label for="candidateSurname"><b>Surname:</b></label>
+                        <input type="text" name="candidateSurname" id="candidateSurname" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="candidateAddress1"><b>Address:</b></label>
+                        <input type="text" name="candidateAddress1" id="candidateAddress1" />
+                    </td>
+                    <td>
+                        <label for="candidateDOB"><b>Date of Birth:</b></label>
+                        <input type="date" name="candidateDOB" id="candidateDOB" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="candidateTown"><b>Town:</b></label>
+                        <input type="text" name="candidateTown" id="candidateTown" />
+                    </td>
+                    <td>
+                        <label for="candidatePhoneHome"><b>Phone (Home):</b></label>
+                        <input type="text" name="candidatePhoneHome" id="candidatePhoneHome" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="candidatePostCode"><b>Postcode:</b></label>
+                        <input type="text" name="candidatePostCode" id="candidatePostCode" />
+                    </td>
+                    <td>
+                        <label for="candidatePhoneMobile"><b>Phone (Mobile):</b></label>
+                        <input type="text" name="candidatePhoneMobile" id="candidatePhoneMobile" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="candidateCountry"><b>Country:</b></label>
+                        <input type="text" name="candidateCountry" id="candidateCountry" />
+                    </td>
+                    <td>
+                        <label for="candidatePhoneWork"><b>Phone (Work):</b></label>
+                        <input type="text" name="candidatePhoneWork" id="candidatePhoneWork" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <small>
+                            <label for="candidateCreatedDate"><b>Created on: </b></label>
+                            <input type="text" id="candidateCreatedDate" name="candidateCreatedDate" style="border:0px; background-color:#eeeeee; min-width:180px">
+                        </small>
 
-                </td>
-                <td>
-                    <small>
-                        <label for="candidateUpdatedDate"><b>Updated on: </b></label>
-                        <input type="text" id="candidateUpdatedDate" name="candidateUpdatedDate" style="background-color:#eeeeee; border:0px; min-width:180px">
-                    </small>
-                </td>
-            </tr>
-        </table>
-    </form>
+                    </td>
+                    <td>
+                        <small>
+                            <label for="candidateUpdatedDate"><b>Updated on: </b></label>
+                            <input type="text" id="candidateUpdatedDate" name="candidateUpdatedDate" style="background-color:#eeeeee; border:0px; min-width:180px">
+                        </small>
+                    </td>
+                </tr>
+            </table>
+        </form>
 
-    <form id="candidateSkillForm">
-        <table id="candidateSkillsTable" name="candidateSkillsTable" width:100%>
-            <tr>
-                <th>
-                    <label for="skillsDropdown"><b>Skills to add: </b></label>
-                    <select class="form-control" id="skillsDropdown" name="skillsDropdown"></select>
-                    &nbsp;<button type="button" id="btnAddSkill" name="btnUpdate">Add Skill</button>
-                </th>
-            </tr>
-            <tr>
-                <td>
-                    <label for="candidateSkillsListBox"><b>Candidate Skills:</b></label>
-                    <select name="candidateSkillsListBox" id="candidateSkillsListBox" size="6"></select>
-                    &nbsp;<button type="button" id="btnRemoveSkill" name="btnUpdate">Remove Skill</button>
-                </td>
-            </tr>
-        </table>
+        <form id="candidateSkillForm">
+            <table id="candidateSkillsTable" name="candidateSkillsTable" width:100%>
+                <tr>
+                    <th>
+                        <label for="skillsDropdown"><b>Skills to add: </b></label>
+                        <select class="form-control" id="skillsDropdown" name="skillsDropdown"></select>
+                        &nbsp;<button type="button" id="btnAddSkill" name="btnUpdate">Add Skill</button>
+                    </th>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="candidateSkillsListBox"><b>Candidate Skills:</b></label>
+                        <select name="candidateSkillsListBox" id="candidateSkillsListBox" size="6"></select>
+                        &nbsp;<button type="button" id="btnRemoveSkill" name="btnUpdate">Remove Skill</button>
+                    </td>
+                </tr>
+            </table>
 
-    </form>
-</div>
+        </form>
+    </div>
 
     <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js"></script>
     <script>
@@ -249,7 +251,6 @@
                 var id = $('#candidatesDropdown').val();
                 if (id != candidateSelection) {
                     candidateSelection = id;
-                    console.log("selected candidate = " + id);
 
                     // populate text boxes
                     var candidateJson = findCandidate(candidateSelection);
@@ -283,11 +284,10 @@
 
         $('#btnRemoveSkill').click(function () {
             var selected = $('#candidateSkillsListBox option:selected').val();
-            console.log(selected);
 
             // Make sure candidateSelection is initialised (candidate selected)
             // and an option has been selected from the select list box.
-            
+
             if (candidateSelection > -1 && selected != null) {
                 var cs = findCandidateSkillFromId(selected);
                 removeCandidateSkill(cs);
@@ -300,7 +300,6 @@
 
             if (candidateSelection > -1) {
                 if (skillId > -1) {
-                    console.log("attempting add candidate skill");
                     addCandidateSkill(skillId);
                 } else {
                     alert("Select a skill first!");
@@ -334,12 +333,9 @@
 
         function getSkillName(id) {
             var Name = null;
-            console.log("Looking up skill ID: " + id);
             for (var x = 0; x < skillsJSON.length; x++) {
                 if (skillsJSON[x].Id == id) {
-                    console.log("x = " + x + " SkillsJSON[x].Id = " + skillsJSON[x].Id);
                     Name = skillsJSON[x].Name;
-                    console.log("Skill name: " + Name);
                     return Name;
                 }
             }
@@ -414,7 +410,6 @@
         }
 
         function removeCandidateSkillsListOption(candidateSkill) {
-            console.log("Removing from list : " + candidateSkill.Id);
             $('#candidateSkillsListBox option[value="' + candidateSkill.Id + '"]').remove();
         }
 
@@ -454,8 +449,6 @@
             $.getJSON(candidateUri)
                 .done(function (data) {
                     candidatesJSON = sortJSON(data, "Surname", "123");
-                    //$("#loader").css("display", "none");
-                    //$("#pageContents").css("display", "block");
 
                     // On success, 'data' contains a list of candidates.
                     // Populate the dropdown, to select the candidate
@@ -478,7 +471,6 @@
                 }
             });
             id++;
-            console.log("unique Id: " + id);
             return id;
         }
 
@@ -513,7 +505,6 @@
         }
 
         function addCandidateSkill(skillId) {
-            console.log("addCandidateSkill " + skillId);
             candidateSkillJson = {
                 "SkillId": skillId,
                 "CandidateId": candidateSelection,
@@ -561,7 +552,7 @@
                 "Id": findUniqueId(candidatesJSON),
                 "FirstName": `${$('#candidateFirstname').val()}`,
                 "Surname": `${$('#candidateSurname').val()}`,
-                "DateOfBirth": `${$('#candidateDOB').val()}`, 
+                "DateOfBirth": `${$('#candidateDOB').val()}`,
                 "Address1": `${$('#candidateAddress1').val()}`,
                 "Town": `${$('#candidateTown').val()}`,
                 "PostCode": `${$('#candidatePostCode').val()}`,
