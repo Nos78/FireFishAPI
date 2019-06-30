@@ -115,14 +115,8 @@
     </div>
 
     <div style="display:none;" id="pageContents" class="animate-bottom">
-    <div>
-        <h2>Search by ID</h2>
-        <input type="text" id="candidateId" size="5" />
-        <input type="button" value="Search" onclick="find();" />
-        <p id="candidate" />
-    </div>
     <form id="candidatesForm">
-        <table width:100%>
+        <table>
             <tr>
                 <th>
                     <label for="candidatesDropdown"><b>Select a Candidate</b></label>
@@ -293,8 +287,11 @@
 
             // Make sure candidateSelection is initialised (candidate selected)
             // and an option has been selected from the select list box.
+            
             if (candidateSelection > -1 && selected != null) {
-                removeCandidateSkill(findCandidateSkillFromSkillId(selected));
+                var cs = findCandidateSkillFromId(selected);
+                removeCandidateSkill(cs);
+                removeCandidateSkillsListOption(cs);
             }
         });
 
@@ -380,11 +377,12 @@
             return candidateJson;
         }
 
-        function findCandidateSkillFromSkillId(skillId) {
+        function findCandidateSkillFromId(Id) {
             var cs = null;
             for (var x = 0; x < candidateSkillJSON.length; x++) {
-                if (candidateSkillJSON[x].Id == skillId) {
+                if (candidateSkillJSON[x].Id == Id) {
                     cs = candidateSkillJSON[x];
+                    return cs;
                 }
             }
             return cs;
@@ -416,7 +414,8 @@
         }
 
         function removeCandidateSkillsListOption(candidateSkill) {
-            $('#candidateSkillsListBox option[value="' + candidateSkill.SkillId + '"]').remove();
+            console.log("Removing from list : " + candidateSkill.Id);
+            $('#candidateSkillsListBox option[value="' + candidateSkill.Id + '"]').remove();
         }
 
         function populateCandidateSkillsList() {
@@ -540,7 +539,16 @@
             // TODO: this should be in the success: ajax element,
             // but the successful POST operation appears not to be
             // returning success (Headers look fine in Fiddler)
-            addCandidateSkillsListOption(candidateSkillJson);
+
+            // Re-populate the skills list, as adding item to the list
+            // produces a null id field until the api is re-queried.
+            setTimeout(function () {
+                populateCandidateSkillsList();
+            }, 2000);
+
+            // This will not work currently, as the Id number of the record is unknown
+            //addCandidateSkillsListOption(candidateSkillJson);
+
         }
 
         function addNewCandidate() {
