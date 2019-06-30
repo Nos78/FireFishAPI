@@ -71,7 +71,7 @@ namespace FireFishAPI.Services
 
         public void Delete(CandidateSkill cs)
         {
-            Delete(cs.Id);
+            _candidateSkillRepository.Delete(cs);
         }
     }
 }

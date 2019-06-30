@@ -96,13 +96,18 @@ namespace FireFishAPI.Repositories
         #endregion
 
         #region DELETE methods
-        public void Delete(int candidateId, SqlConnection sqlConnection = null, SqlTransaction sqlTransaction = null)
+        public void Delete(int candidateSkillId)
         {
-            // This will delete all the skills where candidateId is matched.
-            var sqlCommand = "DELETE FROM dbo.CandidateSkill WHERE CandidateID = @CandidateID ";
-            var parameters = new SqlParameter[] { new SqlParameter("@CandidateID", candidateId) };
+            // Delete the referenced candidateSkillId
+            var sqlCommand = "DELETE FROM dbo.CandidateSkill WHERE ID = @Id";
+            var parameters = new SqlParameter[] { new SqlParameter("@Id", candidateSkillId) };
 
-            base.ExecuteNonQuery(sqlCommand, parameters, CommandType.Text, sqlConnection, sqlTransaction);
+            base.ExecuteNonQuery(sqlCommand, parameters);
+        }
+
+        public void Delete(CandidateSkill cs)
+        {
+            Delete(cs.CandidateId, cs.SkillId);
         }
 
         public void Delete(int candidateId, int skillId, SqlConnection sqlConnection = null, SqlTransaction sqlTransaction = null)
@@ -112,6 +117,15 @@ namespace FireFishAPI.Repositories
                             + "WHERE CandidateID = @CandidateID AND SkillID = @SkillID ";
             var parameters = new SqlParameter[] { new SqlParameter("@CandidateID", candidateId)
                                                 , new SqlParameter("@SkillID", skillId) };
+
+            base.ExecuteNonQuery(sqlCommand, parameters, CommandType.Text, sqlConnection, sqlTransaction);
+        }
+
+        public void DeleteAll(int candidateId, SqlConnection sqlConnection = null, SqlTransaction sqlTransaction = null)
+        {
+            // This will delete all the skills where candidateId is matched.
+            var sqlCommand = "DELETE FROM dbo.CandidateSkill WHERE CandidateID = @CandidateID ";
+            var parameters = new SqlParameter[] { new SqlParameter("@CandidateID", candidateId) };
 
             base.ExecuteNonQuery(sqlCommand, parameters, CommandType.Text, sqlConnection, sqlTransaction);
         }
