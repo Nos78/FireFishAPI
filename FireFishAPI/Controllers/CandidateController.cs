@@ -28,7 +28,7 @@ namespace FireFishAPI.Controllers
                                     , "No candidates found");
         }
 
-        // GET: api/Candidate/5
+        // GET: api/candidate/5
         [HttpGet]
         public HttpResponseMessage Get(int id)
         {
@@ -39,7 +39,7 @@ namespace FireFishAPI.Controllers
                                     , "Candidate with Id " + id + " does not exist");
         }
 
-        // POST: api/Candidate
+        // POST: api/candidate
         [HttpPost]
         public HttpResponseMessage Post([FromBody]Candidate candidate)
         {
@@ -50,7 +50,7 @@ namespace FireFishAPI.Controllers
             return message;
         }
 
-        // PUT: api/Customer/5
+        // PUT: api/candidate/5
         [HttpPut]
         public HttpResponseMessage Put([FromBody]Candidate candidate)
         {
@@ -58,7 +58,7 @@ namespace FireFishAPI.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, string.Empty);
         }
 
-        // DELETE: api/Customer/5
+        // DELETE: api/candidate/5
         [HttpDelete]
         public HttpResponseMessage Delete(int id)
         {

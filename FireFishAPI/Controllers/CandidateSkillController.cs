@@ -18,6 +18,7 @@ namespace FireFishAPI.Controllers
         }
 
         // GET: api/CandidateSkill
+        [HttpGet]
         public HttpResponseMessage Get()
         {
             //var candidateSkills = _candidateSkillService.Get();
@@ -29,6 +30,7 @@ namespace FireFishAPI.Controllers
         }
 
         // GET: api/CandidateSkill/5
+        [HttpGet]
         public HttpResponseMessage Get(int id)
         {
             // Candidate.Id (not CandidateSkill.Id!)
@@ -40,6 +42,7 @@ namespace FireFishAPI.Controllers
         }
 
         // POST: api/CandidateSkill
+        [HttpPost]
         public HttpResponseMessage Post([FromBody]CandidateSkill skill)
         {
             _candidateSkillService.Add(skill);
@@ -50,9 +53,11 @@ namespace FireFishAPI.Controllers
         }
 
         // DELETE: api/CandidateSkill/5
-        public HttpResponseMessage Delete(int candidateSkillId)
+        [HttpDelete]
+        public HttpResponseMessage Delete(int id)
         {
-            _candidateSkillService.Delete(candidateSkillId);
+            // id represents candidateSkillId
+            _candidateSkillService.Delete(id);
             return Request.CreateResponse(HttpStatusCode.OK, string.Empty);
         }
     }
