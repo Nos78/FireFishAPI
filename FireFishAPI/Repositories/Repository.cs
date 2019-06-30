@@ -10,13 +10,14 @@ namespace FireFishAPI.Repositories
     {
         public string ConnectionString { get; set; }
 
-
         public abstract T PopulateRecord(IDataReader reader);
 
+        protected int _nextPrimaryKey;
 
         public Repository()
         {
             ConnectionString = ConfigurationManager.ConnectionStrings["FireFishAPIDbConnection"].ConnectionString;
+            _nextPrimaryKey = -1;
         }
 
         #region Generic Get methods

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-
+using System.Linq;
 using FireFishAPI.Models;
 
 namespace FireFishAPI.Repositories
@@ -12,6 +12,23 @@ namespace FireFishAPI.Repositories
         public override CandidateSkill PopulateRecord(IDataReader reader)
         {
             return new CandidateSkill(reader);
+        }
+
+        public CandidateSkillRepository()
+        {
+            
+        }
+
+        public int NextPrimaryKey()
+        {
+            if(_nextPrimaryKey == -1)
+            {
+                // Initialise, database lookup
+                var sqlCommand = "SELECT TOP 1 * FROM dbo.CandidateSkill ORDER BY ID DESC";
+                List<CandidateSkill> lastRecord = base.Get(sqlCommand).ToList();
+                _nextPrimaryKey = lastRecord.Last().Id + 1;
+            }
+            return _nextPrimaryKey++;
         }
 
         #region GET methods
@@ -52,11 +69,13 @@ namespace FireFishAPI.Repositories
             candidateSkill.CreatedDate = DateTime.Now;
             candidateSkill.UpdatedDate = candidateSkill.CreatedDate;
 
+            candidateSkill.Id = NextPrimaryKey();
+
             var sqlCommand =
                 "IF NOT EXISTS(SELECT 1 FROM dbo.CandidateSkill WHERE CandidateID = @CandidateID AND SkillID = @SkillID) "
                 + "INSERT INTO dbo.CandidateSkill "
                 + "    (ID, CandidateID, SkillID, CreatedDate, UpdatedDate) "
-                + "VALUES(@ID, @CandidateId, @SkillId, @CreatedDate, @UpdatedDate)";
+                + "VALUES(@Id, @CandidateId, @SkillId, @CreatedDate, @UpdatedDate)";
 
             base.ExecuteNonQuery(sqlCommand, candidateSkill.ToParameterArray(), CommandType.Text, sqlConnection, sqlTransaction);
         }
